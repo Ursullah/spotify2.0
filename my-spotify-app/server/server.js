@@ -27,7 +27,8 @@ const generateRandomString = length => {
 // Route that initiates the Spotify login flow
 app.get('/login', (req, res) => {
   const state = generateRandomString(16); // Generate a unique state value
-  const scope = 'user-read-private user-read-email playlist-read-private user-top-read'; // Scopes define what data the app can access
+  const scope = 
+  'user-read-private user-read-email playlist-read-private user-top-read'; // Scopes define what data the app can access
 
   // Build the authorization URL with query parameters
   const params = stringify({
