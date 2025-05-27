@@ -1,20 +1,23 @@
 import React from 'react'
-import Home from './components/Home.JSX'
-import GenerationSongDisplay from './components/GenerationSongDisplay'
-import './components/Login'
-import Login from './components/Login'
-import Dashboard from './components/Dashboard'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './components/Dashboard';
+import GenerationChart from './components/GenerationChart';
+import Header from './components/Header';
+
 
 const App = () => {
   return (
-    <div>
-      <Home />
-      <GenerationSongDisplay />
-      <Login />
-      <Dashboard />
-    </div>
+    <>
+      <Router>
+        <Header />
+        <Routes>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/charts/:generation" element={<GenerationChart />} />
+        </Routes>
+      </Router>
+    </>
   )
 }
 
-export default App
 
+export default App
