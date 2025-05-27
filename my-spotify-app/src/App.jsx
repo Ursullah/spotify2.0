@@ -1,8 +1,9 @@
 import React from 'react'
-import Home from './assets/components/Home.JSX'
-import GenerationSongDisplay from './assets/components/GenerationSongDisplay'
-import './assets/components/Login'
-import Login from './assets/components/Login'
+import Home from './components/Home.JSX'
+import GenerationSongDisplay from './components/GenerationSongDisplay'
+import './components/Login'
+import Login from './components/Login'
+import Dashboard from './components/Dashboard'
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <Home />
       <GenerationSongDisplay />
       <Login />
+      <Dashboard />
     </div>
   )
 }
