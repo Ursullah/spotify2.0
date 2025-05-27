@@ -1,11 +1,18 @@
 import React from 'react'
+import Home from './assets/components/Home.JSX'
+import GenerationSongDisplay from './assets/components/GenerationSongDisplay'
+import './assets/components/Login'
+import Login from './assets/components/Login'
 
 const App = () => {
   return (
-    <div className='text-black font-bold text-3xl underline'>
-      <p>I'm determined to do this all over again</p>
+    <div>
+      <Home />
+      <GenerationSongDisplay />
+      <Login />
     </div>
   )
 }
 
 export default App
+
