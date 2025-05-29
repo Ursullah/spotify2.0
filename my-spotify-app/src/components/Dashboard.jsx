@@ -9,25 +9,55 @@ const Dashboard = () => {
   const [accessToken, setAccessToken] = useState(null);    // Spotify access token
   const navigate = useNavigate();
 
+  const refreshAccessToken = async () => {
+    const refreshToken = localStorage.getItem('spotify_refresh_token');
+    if (!refreshToken) return; 
+    try{
+      const response = await axios.get(`http://127.0.0.1:8888/refresh_token?refresh_token=${refreshToken}`)
+      const newAccessToken = response.data.access_token;
+      if(newAccessToken){
+        setAccessToken(newAccessToken);
+        localStorage.setItem('spotify_access_token', newAccessToken); // Update token in local storage
+      }
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle token refresh failure
+      localStorage.removeItem('spotify_access_token'); // Clear invalid token
+      navigate('/login'); // Redirect to login page
+  }
+}
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('access_token');
-    setAccessToken(token);
 
-    if (token) {
-      localStorage.setItem('spotify_access_token', token); // Store token in local storage
-      // Fetch user profile
-      axios.get('https://api.spotify.com/v1/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => setUser(res.data))
-      .catch(err => console.error(err));
+ useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get('access_token');
+  const refreshToken = urlParams.get('refresh_token');
+  
+  if (refreshToken) {
+    localStorage.setItem('spotify_refresh_token', refreshToken);
+  }
 
-      // Fetch top and recommended tracks
-      fetchMusicData(token);  
-    }
-  }, []);
+  const storedAccessToken = tokenFromUrl || localStorage.getItem('spotify_access_token');
+  if (storedAccessToken) {
+    setAccessToken(storedAccessToken);
+    localStorage.setItem('spotify_access_token', storedAccessToken);
+
+    axios.get('https://api.spotify.com/v1/me', {
+      headers: { Authorization: `Bearer ${storedAccessToken}` }
+    })
+    .then(res => setUser(res.data))
+    .catch(err => {
+      if (err.response?.status === 401) {
+        refreshAccessToken(); // token might be expired
+      } else {
+        console.error(err);
+      }
+    });
+
+    fetchMusicData(storedAccessToken);
+  }
+}, []);
+
 
   // Fetch user's top tracks
   const fetchMusicData = async (token) => {
@@ -59,11 +89,11 @@ const Dashboard = () => {
         <label className='block font-semibold mb-1'>Choose Generation</label>
         <select onChange = {handleSelectGeneration} className='p-2 rounded-lg border bg-white text-black'>
           <option value="" disabled>Choose generation</option>
-          <option value="Boomers">Baby Boomer</option>
-          <option value="Gen-X">Gen X</option>
-          <option value="Millennials">Millennial</option>
-          <option value="Gen-Z">Gen Z</option>
-          <option value="Alpha">Gen Alpha</option>
+          <option value="boomers">Baby Boomer</option>
+          <option value="gen-x">Gen X</option>
+          <option value="millennials">Millennial</option>
+          <option value="gen-z">Gen Z</option>
+          <option value="gen-alpha">Gen Alpha</option>
         </select>
       </div>
 
