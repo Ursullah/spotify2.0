@@ -6,6 +6,7 @@ import axios from 'axios';
 const Dashboard = () => {
   const [user, setUser] = useState(null);                   // User profile info
   const [tracks, setTracks] = useState([]);                 // User's top tracks
+  const [recommended, setRecommended] = useState([]);       //Recommended tracks
   const [accessToken, setAccessToken] = useState(null);    // Spotify access token
   const navigate = useNavigate();
 
@@ -73,6 +74,33 @@ const Dashboard = () => {
     }
   };
 
+  const fetchRecommendedTracks = async (token, seedTrackId) =>{
+    try{
+      const response = await axios.get ('https://api.spotify.com/v1/recommendations',
+        {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        params: {
+          limit: 10, //Number of recommended tracks to fetch
+          seed_tracks: seedTrackId
+        }
+      });
+      setRecommended(response.data.tracks); //return recommended tracks
+     console.log('Recommended tracks:', response.data.tracks);
+    } catch (error) {
+      console.error('Error fetching recommended tracks:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (tracks.length > 0 && accessToken) {
+      const seedTrackId = tracks[0].id; //Use the track id as seed
+      fetchRecommendedTracks(accessToken, seedTrackId);
+    }
+  }, [tracks, accessToken]);
+
+
   //navigate to generation chart on user selection
   const handleSelectGeneration = (e) =>{
     const generation = e.target.value;
@@ -83,7 +111,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Spotify Dashboard</h1>
+      {/* <h1 className="text-xl font-bold mb-4">Spotify Dashboard</h1>
 
       <div className='mb-6'>
         <label className='block font-semibold mb-1'>Choose Generation</label>
@@ -95,7 +123,7 @@ const Dashboard = () => {
           <option value="gen-z">Gen Z</option>
           <option value="gen-alpha">Gen Alpha</option>
         </select>
-      </div>
+      </div> */}
 
       {user ? (
         <div className="mb-6">
@@ -118,6 +146,16 @@ const Dashboard = () => {
         </div>
       )}
 
+      {recommended.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold mt-6 mb-2">Recommended for you</h2>
+          <div className="grid grid-cols-3 gap-4">
+            {recommended.map(track => (
+              <SongCard key={track.id} track={track} />
+            ))}
+          </div>
+       </div>
+      )}
       
     </div>
   );

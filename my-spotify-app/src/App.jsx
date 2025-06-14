@@ -12,7 +12,7 @@ const App = () => {
       <Router>
         <Header />
         <Routes>
-          <Route path="/dashboard?" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/onboarding" element={<GenerationSelector />} />
           <Route path="/charts/:generation" element={<GenerationChart />} />
         </Routes>
